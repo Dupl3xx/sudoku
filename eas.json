@@ -9,14 +9,12 @@
       "ios": {
         "simulator": false,
         "buildConfiguration": "Release",
-        "credentialsSource": "local"
+        "credentialsSource": "remote"
       }
     },
-    "production": {
-      "distribution": "store",
+    "simulator": {
       "ios": {
-        "buildConfiguration": "Release",
-        "credentialsSource": "remote"
+        "simulator": true
       }
     }
   }

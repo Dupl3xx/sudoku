@@ -35,13 +35,12 @@
     "web": {
       "favicon": "./assets/icon.png"
     },
-    "plugins": [
-      "react-native-reanimated"
-    ],
+    "plugins": [],
     "extra": {
       "eas": {
-        "projectId": "sudoku-ondrej"
+        "projectId": "f8e72753-c41e-490e-a29d-2a097a6d0207"
       }
-    }
+    },
+    "owner": "dupl3xx"
   }
 }
