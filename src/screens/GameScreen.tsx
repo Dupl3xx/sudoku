@@ -53,6 +53,7 @@ export default function GameScreen() {
   const [isNewBestTime, setIsNewBestTime] = useState(false);
   const [isNewStreak, setIsNewStreak] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
+  const [lockedNumber, setLockedNumber] = useState<number | null>(null);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const gameRef = useRef(game);
@@ -209,6 +210,26 @@ export default function GameScreen() {
       const newNotes = [...g.notes];
       newNotes[idx] = [];
 
+      // Auto-remove same pencil marks from same row, col, and 3x3 box
+      const row = Math.floor(idx / 9);
+      const col = idx % 9;
+      const boxRow = Math.floor(row / 3) * 3;
+      const boxCol = Math.floor(col / 3) * 3;
+      for (let c = 0; c < 9; c++) {
+        const i = row * 9 + c;
+        if (newNotes[i]?.length) newNotes[i] = newNotes[i].filter((n) => n !== num);
+      }
+      for (let r = 0; r < 9; r++) {
+        const i = r * 9 + col;
+        if (newNotes[i]?.length) newNotes[i] = newNotes[i].filter((n) => n !== num);
+      }
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+          const i = (boxRow + r) * 9 + (boxCol + c);
+          if (newNotes[i]?.length) newNotes[i] = newNotes[i].filter((n) => n !== num);
+        }
+      }
+
       let newMistakes = g.mistakes;
       let newMaxMistakes = g.maxMistakes;
 
@@ -321,6 +342,11 @@ export default function GameScreen() {
     setGame((g) => ({ ...g, isPencilMode: !g.isPencilMode }));
   };
 
+  const handleNumberLongPress = (num: number) => {
+    haptic('light');
+    setLockedNumber((prev) => (prev === num ? null : num));
+  };
+
   const handleHint = () => {
     const maxHints = settings?.maxHints ?? 3;
     if (maxHints > 0 && game.hintsUsed >= maxHints) {
@@ -348,9 +374,30 @@ export default function GameScreen() {
     haptic('success');
     setGame((g) => {
       const newInput = [...g.userInput];
-      newInput[idx] = g.solution[idx];
+      const hintNum = g.solution[idx];
+      newInput[idx] = hintNum;
       const newNotes = [...g.notes];
       newNotes[idx] = [];
+
+      // Auto-remove same pencil marks from same row, col, and 3x3 box
+      const hRow = Math.floor(idx / 9);
+      const hCol = idx % 9;
+      const hBoxRow = Math.floor(hRow / 3) * 3;
+      const hBoxCol = Math.floor(hCol / 3) * 3;
+      for (let c = 0; c < 9; c++) {
+        const i = hRow * 9 + c;
+        if (newNotes[i]?.length) newNotes[i] = newNotes[i].filter((n) => n !== hintNum);
+      }
+      for (let r = 0; r < 9; r++) {
+        const i = r * 9 + hCol;
+        if (newNotes[i]?.length) newNotes[i] = newNotes[i].filter((n) => n !== hintNum);
+      }
+      for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+          const i = (hBoxRow + r) * 9 + (hBoxCol + c);
+          if (newNotes[i]?.length) newNotes[i] = newNotes[i].filter((n) => n !== hintNum);
+        }
+      }
 
       const updatedGame: GameState = {
         ...g,
@@ -360,7 +407,7 @@ export default function GameScreen() {
         selectedCell: idx,
         history: [
           ...g.history.slice(-50),
-          { cellIndex: idx, prevValue: g.userInput[idx], prevNotes: g.notes[idx] ?? [] },
+          { cellIndex: idx, prevValue: g.userInput[idx], prevNotes: g.notes[idx] ?? [], },
         ],
       };
 
@@ -454,6 +501,7 @@ export default function GameScreen() {
               highlightRelatedCells: settings.highlightRelatedCells,
             }}
             onCellPress={handleCellPress}
+            lockedNumber={lockedNumber}
           />
 
           {/* Pause overlay */}
@@ -482,7 +530,12 @@ export default function GameScreen() {
             onHint={handleHint}
           />
           <View style={{ height: 16 }} />
-          <NumberPad gameState={game} onNumberPress={handleNumberPress} />
+          <NumberPad
+            gameState={game}
+            onNumberPress={handleNumberPress}
+            onNumberLongPress={handleNumberLongPress}
+            lockedNumber={lockedNumber}
+          />
         </View>
       </SafeAreaView>
 

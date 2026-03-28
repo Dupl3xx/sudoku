@@ -13,13 +13,15 @@ import { GameState } from '../utils/storage';
 interface Props {
   gameState: GameState;
   onNumberPress: (num: number) => void;
+  onNumberLongPress: (num: number) => void;
+  lockedNumber: number | null;
 }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const PAD_WIDTH = Math.min(SCREEN_WIDTH - 28, 420);
 const BTN_SIZE = Math.floor((PAD_WIDTH - 8 * 6) / 9); // 9 buttons with gaps
 
-export default function NumberPad({ gameState, onNumberPress }: Props) {
+export default function NumberPad({ gameState, onNumberPress, onNumberLongPress, lockedNumber }: Props) {
   const { scheme } = useTheme();
   const colors = Colors[scheme];
 
@@ -38,19 +40,27 @@ export default function NumberPad({ gameState, onNumberPress }: Props) {
         const remaining = 9 - counts[num];
         const isDisabled = remaining <= 0;
 
+        const isLocked = lockedNumber === num;
+
         return (
           <TouchableOpacity
             key={num}
             activeOpacity={0.6}
-            onPress={() => !isDisabled && onNumberPress(num)}
+            onPress={() => {
+              if (isDisabled) return;
+              // When a number is locked, any tap writes the locked number
+              onNumberPress(lockedNumber !== null ? lockedNumber : num);
+            }}
+            onLongPress={() => !isDisabled && onNumberLongPress(num)}
+            delayLongPress={400}
             style={[
               styles.btn,
               {
                 width: BTN_SIZE,
                 height: BTN_SIZE + 14,
-                backgroundColor: colors.numpadBg,
+                backgroundColor: isLocked ? colors.accent : colors.numpadBg,
                 opacity: isDisabled ? 0.3 : 1,
-                borderColor: colors.border,
+                borderColor: isLocked ? colors.accent : colors.border,
               },
             ]}
           >
@@ -58,7 +68,7 @@ export default function NumberPad({ gameState, onNumberPress }: Props) {
               style={[
                 styles.btnNum,
                 {
-                  color: isDisabled ? colors.numpadDisabled : colors.numpadText,
+                  color: isLocked ? '#FFFFFF' : (isDisabled ? colors.numpadDisabled : colors.numpadText),
                   fontSize: BTN_SIZE * 0.48,
                 },
               ]}
@@ -66,7 +76,7 @@ export default function NumberPad({ gameState, onNumberPress }: Props) {
               {num}
             </Text>
             {!isDisabled && (
-              <Text style={[styles.btnCount, { color: colors.textTertiary }]}>
+              <Text style={[styles.btnCount, { color: isLocked ? '#FFFFFFAA' : colors.textTertiary }]}>
                 {remaining}
               </Text>
             )}

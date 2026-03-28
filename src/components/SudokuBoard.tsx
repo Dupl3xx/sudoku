@@ -19,6 +19,7 @@ interface Props {
     highlightRelatedCells: boolean;
   };
   onCellPress: (index: number) => void;
+  lockedNumber?: number | null;
 }
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -28,7 +29,7 @@ const CELL_GAP = 1;
 const BOX_SIZE = (BOARD_SIZE - BOX_GAP * 2) / 3;
 const CELL_SIZE = (BOX_SIZE - CELL_GAP * 2) / 3;
 
-export default function SudokuBoard({ gameState, settings, onCellPress }: Props) {
+export default function SudokuBoard({ gameState, settings, onCellPress, lockedNumber }: Props) {
   const { scheme } = useTheme();
   const colors = Colors[scheme];
 
@@ -92,12 +93,21 @@ export default function SudokuBoard({ gameState, settings, onCellPress }: Props)
       userInput[idx] !== null &&
       userInput[idx] !== solution[idx];
 
-    return { isSelected, isSameNumber, isRelated, hasError, value };
+    // Highlight cells in same 3x3 box as selected that have the locked note
+    const isLockedNoteHighlight =
+      lockedNumber != null &&
+      !isSelected &&
+      !value &&
+      selectedCell !== null &&
+      myBox === selBox &&
+      (notes[idx] ?? []).includes(lockedNumber);
+
+    return { isSelected, isSameNumber, isRelated, hasError, value, isLockedNoteHighlight };
   };
 
   const renderCell = (row: number, col: number) => {
     const idx = row * 9 + col;
-    const { isSelected, isSameNumber, isRelated, hasError, value } = getCellState(idx);
+    const { isSelected, isSameNumber, isRelated, hasError, value, isLockedNoteHighlight } = getCellState(idx);
     const isGiven = given[idx];
     const cellNotes = notes[idx] ?? [];
     const hasNotes = !value && cellNotes.length > 0;
@@ -106,6 +116,7 @@ export default function SudokuBoard({ gameState, settings, onCellPress }: Props)
     if (isSelected) bgColor = colors.cellSelected;
     else if (hasError) bgColor = colors.cellError;
     else if (isSameNumber) bgColor = colors.cellSameNum;
+    else if (isLockedNoteHighlight) bgColor = colors.accent + '28';
     else if (isRelated) bgColor = colors.cellHighlight;
 
     let textColor = isGiven ? colors.givenText : colors.userText;
@@ -138,8 +149,11 @@ export default function SudokuBoard({ gameState, settings, onCellPress }: Props)
                     styles.noteNum,
                     {
                       color: cellNotes.includes(n)
-                        ? isSelected ? '#FFFFFF' : colors.userText
+                        ? isSelected
+                          ? '#FFFFFF'
+                          : (lockedNumber === n ? colors.accent : colors.userText)
                         : 'transparent',
+                      fontWeight: lockedNumber === n && cellNotes.includes(n) ? '700' : '400',
                     },
                   ]}
                 >
