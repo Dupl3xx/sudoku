@@ -1,0 +1,51 @@
+build:
+  name: Sudoku Preview Build
+  steps:
+    - eas/checkout
+    - eas/install_node_modules
+    - eas/resolve_build_config
+    - eas/resolve_apple_team_id_from_credentials:
+        id: resolve_apple_team_id_from_credentials
+    - eas/prebuild:
+        inputs:
+          apple_team_id: ${ steps.resolve_apple_team_id_from_credentials.apple_team_id }
+    - run:
+        name: Install pods
+        working_directory: ./ios
+        command: pod install
+    - eas/configure_ios_credentials
+    - eas/configure_ios_version
+    - run:
+        name: Patch signing + build IPA with gym
+        working_directory: ./ios
+        command: |
+          set -euo pipefail
+
+          # Patch project.pbxproj to use development signing
+          PBXPROJ="Sudoku.xcodeproj/project.pbxproj"
+          sed -i '' 's/CODE_SIGN_IDENTITY = "iPhone Distribution";/CODE_SIGN_IDENTITY = "iPhone Developer";/g' "$PBXPROJ"
+          sed -i '' 's/CODE_SIGN_IDENTITY = "Apple Distribution";/CODE_SIGN_IDENTITY = "iPhone Developer";/g' "$PBXPROJ"
+          sed -i '' 's/"CODE_SIGN_IDENTITY\[sdk=iphoneos\*\]" = "iPhone Distribution";/"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";/g' "$PBXPROJ"
+          sed -i '' 's/CODE_SIGN_STYLE = Automatic;/CODE_SIGN_STYLE = Manual;/g' "$PBXPROJ"
+          echo "=== Signing settings ==="
+          grep -E "CODE_SIGN_IDENTITY|CODE_SIGN_STYLE" "$PBXPROJ" | sort -u
+
+          # Show installed provisioning profiles
+          echo "=== Installed profiles ==="
+          ls ~/Library/MobileDevice/Provisioning\ Profiles/ 2>/dev/null || echo "no profiles dir"
+
+          # Create Gymfile in ios/ so fastlane gym picks it up
+          mkdir -p ../build
+          cat > Gymfile << 'GYMEOF'
+scheme("Sudoku")
+configuration("Release")
+export_method("development")
+output_directory("../build")
+output_name("Sudoku.ipa")
+GYMEOF
+          echo "=== Gymfile ==="
+          cat Gymfile
+
+          # Run gym directly (NOT eas/run_fastlane which overrides export_method)
+          fastlane gym
+    - eas/find_and_upload_build_artifacts

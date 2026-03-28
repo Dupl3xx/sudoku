@@ -9,8 +9,9 @@
       "ios": {
         "simulator": false,
         "buildConfiguration": "Release",
-        "credentialsSource": "remote"
-      }
+        "credentialsSource": "local"
+      },
+      "config": "preview.yml"
     },
     "simulator": {
       "ios": {
