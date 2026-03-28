@@ -230,7 +230,11 @@
   <!-- QR Code -->
   <div class="qr-section">
     <div class="qr-wrap">
-      <div id="qrcode"></div>
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?data=itms-services%3A%2F%2F%3Faction%3Ddownload-manifest%26url%3Dhttps%3A%2F%2Fdupl3xx.github.io%2Fsudoku%2Fmanifest.plist&size=220x220&bgcolor=ffffff&color=000000&qzone=2"
+        alt="QR kód pro instalaci"
+        style="width:200px;height:200px;display:block;border-radius:8px;"
+      />
     </div>
     <p class="qr-label">Naskenuj QR kód pro instalaci</p>
   </div>
@@ -244,12 +248,10 @@
   </div>
 
   <div class="footer">
-    Sudoku · Ondrej Levy · 2026<br>
+    Sudoku · 2026<br>
     <a href="https://dupl3xx.github.io" style="color:#6366F1;text-decoration:none;">dupl3xx.github.io</a>
   </div>
 
-  <!-- QR code library -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
   <script>
     // Draw app icon on canvas
     function drawIcon(canvas, size) {
@@ -297,13 +299,6 @@
 
     drawIcon(document.getElementById('iconCanvas'), 220);
 
-    // Generate QR code
-    const installUrl = 'itms-services://?action=download-manifest&url=https://dupl3xx.github.io/sudoku/manifest.plist';
-    QRCode.toCanvas = undefined; // use toString
-    const qrDiv = document.getElementById('qrcode');
-    QRCode.toString(installUrl, { type: 'svg', width: 200, color: { dark: '#000', light: '#fff' } }, function(err, svg) {
-      if (!err) qrDiv.innerHTML = svg;
-    });
   </script>
 </body>
 </html>
