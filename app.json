@@ -14,7 +14,7 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.google.ios.youtube.RW4Q5ZGHM2",
+      "bundleIdentifier": "com.ondrejlevy.sudoku.RW4Q5ZGHM2",
       "buildNumber": "1",
       "deploymentTarget": "16.0",
       "infoPlist": {
