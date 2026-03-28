@@ -36,13 +36,7 @@ build:
 
           # Create Gymfile in ios/ so fastlane gym picks it up
           mkdir -p ../build
-          cat > Gymfile << 'GYMEOF'
-scheme("Sudoku")
-configuration("Release")
-export_method("development")
-output_directory("../build")
-output_name("Sudoku.ipa")
-GYMEOF
+          printf 'scheme("Sudoku")\nconfiguration("Release")\nexport_method("development")\noutput_directory("../build")\noutput_name("Sudoku.ipa")\n' > Gymfile
           echo "=== Gymfile ==="
           cat Gymfile
 
