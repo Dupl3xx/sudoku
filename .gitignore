@@ -1,0 +1,13 @@
+node_modules/
+.expo/
+dist/
+build/
+*.ipa
+*.p12
+*.mobileprovision
+credentials.json
+ios/
+android/
+.env
+.DS_Store
+Thumbs.db

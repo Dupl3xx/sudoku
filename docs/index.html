@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sudoku – Instalace</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --accent: #6366F1;
+      --accent2: #818CF8;
+      --bg: #000;
+      --card: #1C1C1E;
+      --card2: #2C2C2E;
+      --text: #FFFFFF;
+      --text2: #8E8E93;
+      --text3: #636366;
+      --easy: #30D158;
+      --medium: #FF9F0A;
+      --hard: #FF453A;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 20px 64px;
+    }
+
+    /* Icon */
+    .icon {
+      width: 110px;
+      height: 110px;
+      border-radius: 26px;
+      background: linear-gradient(135deg, #4338CA, #6366F1, #818CF8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      box-shadow: 0 12px 40px rgba(99,102,241,0.45);
+      overflow: hidden;
+    }
+    .icon canvas { width: 110px; height: 110px; }
+
+    h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .version { color: var(--text2); font-size: 15px; margin-bottom: 36px; }
+
+    /* Install button */
+    .install-btn {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 18px 52px;
+      border-radius: 18px;
+      text-decoration: none;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 24px rgba(99,102,241,0.45);
+      transition: opacity 0.15s;
+    }
+    .install-btn:active { opacity: 0.8; }
+
+    .note {
+      color: var(--text3);
+      font-size: 13px;
+      text-align: center;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+
+    .divider { width: 60px; height: 1px; background: #38383A; margin: 36px 0; }
+
+    /* Features */
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      max-width: 320px;
+      margin-bottom: 8px;
+    }
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+      background: var(--card);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .feature-text h3 { font-size: 15px; font-weight: 600; color: var(--text); }
+    .feature-text p { font-size: 13px; color: var(--text2); margin-top: 1px; }
+
+    /* Difficulty badges */
+    .diff-row {
+      display: flex;
+      gap: 10px;
+      margin: 8px 0 0;
+    }
+    .diff-badge {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* QR section */
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .qr-wrap {
+      background: #fff;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+    .qr-label {
+      color: var(--text3);
+      font-size: 12px;
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    /* Requirements */
+    .req {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 16px 20px;
+      max-width: 320px;
+      width: 100%;
+      margin-top: 36px;
+    }
+    .req-title { color: var(--text2); font-size: 11px; font-weight: 600; letter-spacing: 0.6px; margin-bottom: 10px; }
+    .req-item { color: var(--text); font-size: 14px; line-height: 1.7; }
+    .req-item::before { content: '• '; color: var(--accent2); }
+
+    .footer {
+      margin-top: 48px;
+      color: var(--text3);
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- App Icon (drawn by canvas) -->
+  <div class="icon">
+    <canvas id="iconCanvas" width="220" height="220"></canvas>
+  </div>
+
+  <h1>Sudoku</h1>
+  <div class="version">v1.0.0 · iOS 16+</div>
+
+  <!-- Install button -->
+  <a href="itms-services://?action=download-manifest&url=https://dupl3xx.github.io/sudoku/manifest.plist"
+     class="install-btn">
+    ⬇️ Nainstalovat
+  </a>
+  <p class="note">Vyžaduje iOS 16 nebo novější. Zařízení musí být v provisioning profilu.</p>
+
+  <div class="divider"></div>
+
+  <!-- Features -->
+  <div class="features">
+    <div class="feature">
+      <div class="feature-icon">🎯</div>
+      <div class="feature-text">
+        <h3>3 úrovně obtížnosti</h3>
+        <p>Lehká, střední a těžká</p>
+        <div class="diff-row">
+          <span class="diff-badge" style="background:#30D15820;color:#30D158">🌱 Lehká</span>
+          <span class="diff-badge" style="background:#FF9F0A20;color:#FF9F0A">⚡ Střední</span>
+          <span class="diff-badge" style="background:#FF453A20;color:#FF453A">🔥 Těžká</span>
+        </div>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📅</div>
+      <div class="feature-text">
+        <h3>Denní výzva</h3>
+        <p>Každý den nová hádanka pro všechny</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">💡</div>
+      <div class="feature-text">
+        <h3>Nápovědy a tužkové poznámky</h3>
+        <p>Pomoc při složitých situacích</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">📊</div>
+      <div class="feature-text">
+        <h3>Statistiky a série</h3>
+        <p>Sleduj rekordní časy a denní série</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🌍</div>
+      <div class="feature-text">
+        <h3>7 jazyků</h3>
+        <p>Čeština, slovenština, angličtina, němčina, francouzština, španělština, polština</p>
+      </div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🌙</div>
+      <div class="feature-text">
+        <h3>Denní &amp; noční režim</h3>
+        <p>Automaticky nebo ruční přepnutí</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- QR Code -->
+  <div class="qr-section">
+    <div class="qr-wrap">
+      <div id="qrcode"></div>
+    </div>
+    <p class="qr-label">Naskenuj QR kód pro instalaci</p>
+  </div>
+
+  <!-- Requirements -->
+  <div class="req">
+    <div class="req-title">POŽADAVKY</div>
+    <div class="req-item">iPhone X nebo novější (iOS 16+)</div>
+    <div class="req-item">Zařízení musí být v profilu</div>
+    <div class="req-item">Otevřít v Safari (ne Chrome)</div>
+  </div>
+
+  <div class="footer">
+    Sudoku · Ondrej Levy · 2026<br>
+    <a href="https://dupl3xx.github.io" style="color:#6366F1;text-decoration:none;">dupl3xx.github.io</a>
+  </div>
+
+  <!-- QR code library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+  <script>
+    // Draw app icon on canvas
+    function drawIcon(canvas, size) {
+      const ctx = canvas.getContext('2d');
+      const s = size;
+
+      const grad = ctx.createLinearGradient(0, 0, s, s);
+      grad.addColorStop(0, '#4338CA');
+      grad.addColorStop(0.5, '#6366F1');
+      grad.addColorStop(1, '#818CF8');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, s, s);
+
+      const pad = s * 0.10;
+      const gridSize = s - pad * 2;
+      const cellSize = gridSize / 9;
+
+      ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+      ctx.lineWidth = s * 0.008;
+      for (let i = 1; i < 9; i++) {
+        if (i % 3 !== 0) {
+          ctx.beginPath(); ctx.moveTo(pad + i*cellSize, pad); ctx.lineTo(pad + i*cellSize, pad+gridSize); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(pad, pad + i*cellSize); ctx.lineTo(pad+gridSize, pad+i*cellSize); ctx.stroke();
+        }
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = s * 0.018;
+      for (let i = 3; i < 9; i += 3) {
+        ctx.beginPath(); ctx.moveTo(pad + i*cellSize, pad); ctx.lineTo(pad + i*cellSize, pad+gridSize); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad, pad + i*cellSize); ctx.lineTo(pad+gridSize, pad+i*cellSize); ctx.stroke();
+      }
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = s * 0.022;
+      ctx.strokeRect(pad, pad, gridSize, gridSize);
+
+      const nums = [[0,0,'5'],[1,2,'3'],[2,4,'7'],[3,1,'8'],[4,5,'4'],[5,8,'1'],[6,3,'9'],[7,6,'2'],[8,7,'6']];
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.font = `700 ${cellSize * 0.58}px -apple-system, system-ui`;
+      for (const [row, col, n] of nums) {
+        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.fillText(n, pad + col*cellSize + cellSize/2, pad + row*cellSize + cellSize/2);
+      }
+    }
+
+    drawIcon(document.getElementById('iconCanvas'), 220);
+
+    // Generate QR code
+    const installUrl = 'itms-services://?action=download-manifest&url=https://dupl3xx.github.io/sudoku/manifest.plist';
+    QRCode.toCanvas = undefined; // use toString
+    const qrDiv = document.getElementById('qrcode');
+    QRCode.toString(installUrl, { type: 'svg', width: 200, color: { dark: '#000', light: '#fff' } }, function(err, svg) {
+      if (!err) qrDiv.innerHTML = svg;
+    });
+  </script>
+</body>
+</html>

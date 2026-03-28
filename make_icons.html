@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>Sudoku – Generátor ikon</title>
+  <style>
+    body { font-family: system-ui, sans-serif; background: #111; color: #fff; padding: 32px; }
+    canvas { display: none; }
+    .preview { display: flex; gap: 20px; flex-wrap: wrap; margin: 24px 0; }
+    .preview img { border-radius: 22%; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    button {
+      background: #6366F1; color: #fff; border: none; padding: 14px 28px;
+      border-radius: 12px; font-size: 16px; cursor: pointer; margin: 8px 4px;
+    }
+    button:hover { background: #818CF8; }
+    .label { font-size: 12px; text-align: center; color: #aaa; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <h2>🎲 Sudoku – Generátor ikon</h2>
+  <p>Klikni na tlačítko pro vygenerování a stažení ikon aplikace.</p>
+
+  <button onclick="generateAll()">⬇️ Stáhnout všechny ikony</button>
+
+  <div class="preview" id="preview"></div>
+  <canvas id="c"></canvas>
+
+  <script>
+    function drawIcon(ctx, size) {
+      const s = size;
+      const r = s * 0.18; // corner radius for clip
+
+      // Background gradient
+      const grad = ctx.createLinearGradient(0, 0, s, s);
+      grad.addColorStop(0, '#4338CA');
+      grad.addColorStop(0.5, '#6366F1');
+      grad.addColorStop(1, '#818CF8');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(0, 0, s, s, r);
+      ctx.fill();
+
+      // Draw Sudoku grid (3x3 of 3x3)
+      const pad = s * 0.10;
+      const gridSize = s - pad * 2;
+      const cellSize = gridSize / 9;
+
+      // Grid lines (thin)
+      ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+      ctx.lineWidth = s * 0.008;
+      for (let i = 1; i < 9; i++) {
+        if (i % 3 !== 0) {
+          ctx.beginPath();
+          ctx.moveTo(pad + i * cellSize, pad);
+          ctx.lineTo(pad + i * cellSize, pad + gridSize);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(pad, pad + i * cellSize);
+          ctx.lineTo(pad + gridSize, pad + i * cellSize);
+          ctx.stroke();
+        }
+      }
+
+      // Box dividers (thick)
+      ctx.strokeStyle = 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = s * 0.018;
+      for (let i = 3; i < 9; i += 3) {
+        ctx.beginPath();
+        ctx.moveTo(pad + i * cellSize, pad);
+        ctx.lineTo(pad + i * cellSize, pad + gridSize);
+        ctx.stroke();
+
+        ctx.beginPath();
+        ctx.moveTo(pad, pad + i * cellSize);
+        ctx.lineTo(pad + gridSize, pad + i * cellSize);
+        ctx.stroke();
+      }
+
+      // Outer border
+      ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+      ctx.lineWidth = s * 0.022;
+      ctx.strokeRect(pad, pad, gridSize, gridSize);
+
+      // Some numbers for visual interest
+      const nums = [
+        [0,0,'5'], [1,2,'3'], [2,4,'7'],
+        [3,1,'8'], [4,5,'4'], [5,8,'1'],
+        [6,3,'9'], [7,6,'2'], [8,7,'6'],
+      ];
+
+      ctx.fillStyle = '#FFFFFF';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const fontSize = cellSize * 0.58;
+      ctx.font = `700 ${fontSize}px -apple-system, system-ui`;
+
+      for (const [row, col, n] of nums) {
+        const x = pad + col * cellSize + cellSize / 2;
+        const y = pad + row * cellSize + cellSize / 2;
+        ctx.fillStyle = 'rgba(255,255,255,0.95)';
+        ctx.fillText(n, x, y);
+      }
+    }
+
+    function generateIcon(size, filename) {
+      const canvas = document.getElementById('c');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, size, size);
+      drawIcon(ctx, size);
+      return { dataUrl: canvas.toDataURL('image/png'), filename };
+    }
+
+    function download(dataUrl, filename) {
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = filename;
+      a.click();
+    }
+
+    function showPreview(dataUrl, size, filename) {
+      const preview = document.getElementById('preview');
+      const d = document.createElement('div');
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      img.width = Math.min(size, 100);
+      img.height = Math.min(size, 100);
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = `${filename} (${size}×${size})`;
+      d.appendChild(img);
+      d.appendChild(label);
+      preview.appendChild(d);
+    }
+
+    function generateAll() {
+      document.getElementById('preview').innerHTML = '';
+      const icons = [
+        { size: 1024, filename: 'icon.png' },
+        { size: 512, filename: 'splash-icon.png' },
+        { size: 1024, filename: 'adaptive-icon.png' },
+        { size: 180, filename: 'icon-180.png' },
+        { size: 167, filename: 'icon-167.png' },
+        { size: 152, filename: 'icon-152.png' },
+        { size: 120, filename: 'icon-120.png' },
+      ];
+
+      setTimeout(() => {
+        icons.forEach(({ size, filename }) => {
+          const { dataUrl } = generateIcon(size, filename);
+          showPreview(dataUrl, size, filename);
+          setTimeout(() => download(dataUrl, filename), 100);
+        });
+        alert('Ikony jsou připraveny! Ulož je do složky assets/.');
+      }, 100);
+    }
+  </script>
+</body>
+</html>
