@@ -16,6 +16,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Select latest Xcode
+        run: |
+          echo "Available Xcode versions:"
+          ls /Applications/ | grep -i xcode || true
+          LATEST=$(ls -d /Applications/Xcode*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$LATEST" ]; then
+            sudo xcode-select -s "$LATEST"
+            echo "Selected: $LATEST"
+          fi
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+
       - name: Setup Node.js 20
         uses: actions/setup-node@v4
         with:

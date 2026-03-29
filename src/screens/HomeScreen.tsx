@@ -7,6 +7,7 @@ import {
   ScrollView,
   StatusBar,
   Alert,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -35,6 +36,9 @@ export default function HomeScreen() {
   const colors = Colors[scheme];
   const { t } = useTranslation();
   const navigation = useNavigation<Nav>();
+
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
 
   const [savedGame, setSavedGame] = useState<GameState | null>(null);
   const [stats, setStats] = useState<AppStats | null>(null);
@@ -129,7 +133,10 @@ export default function HomeScreen() {
       <StatusBar barStyle={colors.statusBar === 'dark' ? 'dark-content' : 'light-content'} />
       <SafeAreaView edges={['top']} style={{ flex: 1 }}>
         <ScrollView
-          contentContainerStyle={styles.scroll}
+          contentContainerStyle={[
+            styles.scroll,
+            isTablet && { maxWidth: 640, alignSelf: 'center', width: '100%' },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           {/* Header */}

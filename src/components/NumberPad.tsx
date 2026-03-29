@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
 } from 'react-native';
 import { Colors } from '../utils/theme';
 import { useTheme } from '../utils/ThemeContext';
@@ -17,13 +17,12 @@ interface Props {
   lockedNumber: number | null;
 }
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const PAD_WIDTH = Math.min(SCREEN_WIDTH - 28, 420);
-const BTN_SIZE = Math.floor((PAD_WIDTH - 8 * 6) / 9); // 9 buttons with gaps
-
 export default function NumberPad({ gameState, onNumberPress, onNumberLongPress, lockedNumber }: Props) {
   const { scheme } = useTheme();
   const colors = Colors[scheme];
+  const { width } = useWindowDimensions();
+  const PAD_WIDTH = Math.min(width - 32, 540);
+  const BTN_SIZE = Math.floor((PAD_WIDTH - 8 * 6) / 9);
 
   const { puzzle, userInput, given } = gameState;
 

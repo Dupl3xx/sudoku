@@ -8,6 +8,7 @@ import {
   BackHandler,
   StatusBar,
   Vibration,
+  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
@@ -54,6 +55,10 @@ export default function GameScreen() {
   const [isNewStreak, setIsNewStreak] = useState(false);
   const [streakCount, setStreakCount] = useState(0);
   const [lockedNumber, setLockedNumber] = useState<number | null>(null);
+
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+  const isTablet = width >= 768;
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const gameRef = useRef(game);
@@ -491,52 +496,94 @@ export default function GameScreen() {
           </View>
         )}
 
-        {/* Board */}
-        <View style={styles.boardWrap}>
-          <SudokuBoard
-            gameState={game}
-            settings={{
-              autoCheckErrors: settings.autoCheckErrors,
-              highlightSameNumbers: settings.highlightSameNumbers,
-              highlightRelatedCells: settings.highlightRelatedCells,
-            }}
-            onCellPress={handleCellPress}
-            lockedNumber={lockedNumber}
-          />
-
-          {/* Pause overlay */}
-          {isPaused && (
-            <TouchableOpacity
-              style={[styles.pauseOverlay, { backgroundColor: colors.background + 'EE' }]}
-              onPress={handlePause}
-              activeOpacity={1}
-            >
-              <Text style={[styles.pausedText, { color: colors.text }]}>{t('game.paused')}</Text>
-              <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>
-                {t('game.tapToResume')}
-              </Text>
-            </TouchableOpacity>
-          )}
-        </View>
-
-        {/* Controls + Numpad */}
-        <View style={styles.controls}>
-          <GameControls
-            gameState={game}
-            settings={{ maxHints: settings.maxHints }}
-            onUndo={handleUndo}
-            onErase={handleErase}
-            onTogglePencil={handleTogglePencil}
-            onHint={handleHint}
-          />
-          <View style={{ height: 16 }} />
-          <NumberPad
-            gameState={game}
-            onNumberPress={handleNumberPress}
-            onNumberLongPress={handleNumberLongPress}
-            lockedNumber={lockedNumber}
-          />
-        </View>
+        {/* Board + Controls — responsive layout */}
+        {isLandscape && isTablet ? (
+          // iPad landscape: side by side
+          <View style={styles.landscapeWrap}>
+            <View style={styles.landscapeBoard}>
+              <SudokuBoard
+                gameState={game}
+                settings={{
+                  autoCheckErrors: settings.autoCheckErrors,
+                  highlightSameNumbers: settings.highlightSameNumbers,
+                  highlightRelatedCells: settings.highlightRelatedCells,
+                }}
+                onCellPress={handleCellPress}
+                lockedNumber={lockedNumber}
+              />
+              {isPaused && (
+                <TouchableOpacity
+                  style={[styles.pauseOverlay, { backgroundColor: colors.background + 'EE' }]}
+                  onPress={handlePause}
+                  activeOpacity={1}
+                >
+                  <Text style={[styles.pausedText, { color: colors.text }]}>{t('game.paused')}</Text>
+                  <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>{t('game.tapToResume')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.landscapeControls}>
+              <GameControls
+                gameState={game}
+                settings={{ maxHints: settings.maxHints }}
+                onUndo={handleUndo}
+                onErase={handleErase}
+                onTogglePencil={handleTogglePencil}
+                onHint={handleHint}
+              />
+              <View style={{ height: 20 }} />
+              <NumberPad
+                gameState={game}
+                onNumberPress={handleNumberPress}
+                onNumberLongPress={handleNumberLongPress}
+                lockedNumber={lockedNumber}
+              />
+            </View>
+          </View>
+        ) : (
+          // Portrait or phone: vertical layout
+          <>
+            <View style={styles.boardWrap}>
+              <SudokuBoard
+                gameState={game}
+                settings={{
+                  autoCheckErrors: settings.autoCheckErrors,
+                  highlightSameNumbers: settings.highlightSameNumbers,
+                  highlightRelatedCells: settings.highlightRelatedCells,
+                }}
+                onCellPress={handleCellPress}
+                lockedNumber={lockedNumber}
+              />
+              {isPaused && (
+                <TouchableOpacity
+                  style={[styles.pauseOverlay, { backgroundColor: colors.background + 'EE' }]}
+                  onPress={handlePause}
+                  activeOpacity={1}
+                >
+                  <Text style={[styles.pausedText, { color: colors.text }]}>{t('game.paused')}</Text>
+                  <Text style={[styles.pausedSub, { color: colors.textSecondary }]}>{t('game.tapToResume')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            <View style={styles.controls}>
+              <GameControls
+                gameState={game}
+                settings={{ maxHints: settings.maxHints }}
+                onUndo={handleUndo}
+                onErase={handleErase}
+                onTogglePencil={handleTogglePencil}
+                onHint={handleHint}
+              />
+              <View style={{ height: 16 }} />
+              <NumberPad
+                gameState={game}
+                onNumberPress={handleNumberPress}
+                onNumberLongPress={handleNumberLongPress}
+                lockedNumber={lockedNumber}
+              />
+            </View>
+          </>
+        )}
       </SafeAreaView>
 
       <VictoryModal
@@ -591,4 +638,21 @@ const styles = StyleSheet.create({
   pausedText: { fontSize: 28, fontWeight: '700' },
   pausedSub: { fontSize: 15, marginTop: 8 },
   controls: { paddingBottom: 8 },
+  landscapeWrap: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    gap: 24,
+  },
+  landscapeBoard: {
+    flex: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  landscapeControls: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingBottom: 8,
+  },
 });

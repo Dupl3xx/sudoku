@@ -4,7 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
   Animated,
 } from 'react-native';
 import { Colors } from '../utils/theme';
@@ -22,16 +22,15 @@ interface Props {
   lockedNumber?: number | null;
 }
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const BOARD_SIZE = Math.min(SCREEN_WIDTH - 28, 420);
-const BOX_GAP = 2;
-const CELL_GAP = 1;
-const BOX_SIZE = (BOARD_SIZE - BOX_GAP * 2) / 3;
-const CELL_SIZE = (BOX_SIZE - CELL_GAP * 2) / 3;
-
 export default function SudokuBoard({ gameState, settings, onCellPress, lockedNumber }: Props) {
   const { scheme } = useTheme();
   const colors = Colors[scheme];
+  const { width, height } = useWindowDimensions();
+  const BOARD_SIZE = Math.min(width - 32, Math.min(height * 0.52, 540));
+  const BOX_GAP = 2;
+  const CELL_GAP = 1;
+  const BOX_SIZE = (BOARD_SIZE - BOX_GAP * 2) / 3;
+  const CELL_SIZE = (BOX_SIZE - CELL_GAP * 2) / 3;
 
   // Shake animation for mistakes
   const shakeAnims = useRef(
@@ -148,6 +147,8 @@ export default function SudokuBoard({ gameState, settings, onCellPress, lockedNu
                   style={[
                     styles.noteNum,
                     {
+                      fontSize: CELL_SIZE * 0.22,
+                      lineHeight: CELL_SIZE * 0.31,
                       color: cellNotes.includes(n)
                         ? isSelected
                           ? '#FFFFFF'
@@ -266,8 +267,6 @@ const styles = StyleSheet.create({
   noteNum: {
     width: '33.33%',
     textAlign: 'center',
-    fontSize: CELL_SIZE * 0.22,
-    lineHeight: CELL_SIZE * 0.31,
     includeFontPadding: false,
   },
 });
