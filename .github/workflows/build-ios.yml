@@ -79,8 +79,8 @@ jobs:
           PP_PATH="$RUNNER_TEMP/profile.mobileprovision"
           echo -n "$PROFILE_BASE64" | base64 --decode -o "$PP_PATH"
           mkdir -p "$HOME/Library/MobileDevice/Provisioning Profiles"
-          cp "$PP_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/ecf61de9-9e70-434e-91ed-5fff5c9245c7.mobileprovision"
-          echo "Provisioning profile installed: ecf61de9-9e70-434e-91ed-5fff5c9245c7"
+          cp "$PP_PATH" "$HOME/Library/MobileDevice/Provisioning Profiles/c14dc640-8681-4ff9-96b9-1fe4ee0a08a1.mobileprovision"
+          echo "Provisioning profile installed: c14dc640-8681-4ff9-96b9-1fe4ee0a08a1"
 
       - name: Fix Xcode signing settings (use iPhone Developer)
         run: |
@@ -97,7 +97,7 @@ jobs:
       - name: Set provisioning profile UUID in Xcode project
         run: |
           PBXPROJ="ios/Sudoku.xcodeproj/project.pbxproj"
-          PROFILE_UUID="ecf61de9-9e70-434e-91ed-5fff5c9245c7"
+          PROFILE_UUID="c14dc640-8681-4ff9-96b9-1fe4ee0a08a1"
 
           python3 - <<EOF
           import re
@@ -142,7 +142,7 @@ jobs:
             CODE_SIGN_IDENTITY="iPhone Developer" \
             CODE_SIGN_STYLE="Manual" \
             DEVELOPMENT_TEAM="RW4Q5ZGHM2" \
-            PROVISIONING_PROFILE="ecf61de9-9e70-434e-91ed-5fff5c9245c7" \
+            PROVISIONING_PROFILE="c14dc640-8681-4ff9-96b9-1fe4ee0a08a1" \
             PRODUCT_BUNDLE_IDENTIFIER="com.ondrejlevy.sudoku.RW4Q5ZGHM2" \
             -allowProvisioningUpdates 2>&1 | tee /tmp/xcodebuild.log
           BUILD_EXIT=${PIPESTATUS[0]}
@@ -188,7 +188,7 @@ jobs:
             <key>provisioningProfiles</key>
             <dict>
               <key>com.ondrejlevy.sudoku.RW4Q5ZGHM2</key>
-              <string>ecf61de9-9e70-434e-91ed-5fff5c9245c7</string>
+              <string>c14dc640-8681-4ff9-96b9-1fe4ee0a08a1</string>
             </dict>
             <key>compileBitcode</key>
             <false/>
